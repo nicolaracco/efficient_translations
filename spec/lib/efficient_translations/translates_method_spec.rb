@@ -55,7 +55,7 @@ describe EfficientTranslations do
 
     it 'should accept nested attributes' do
       WorkingModel.delete_all
-      WorkingModel.create! :translations_attributes => [{ :locale => 'en', :name => 'pippo' }]
+      WorkingModel.create! :translations_attributes => [{ :locale => :en, :name => 'pippo' }]
       WorkingModel.first.name.should == 'pippo'
     end
 

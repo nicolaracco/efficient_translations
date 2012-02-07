@@ -121,11 +121,11 @@ This scope will fetch only the translations you usually need when you fetch your
 It's not perfect. Observe the following code to understand why:
 
     Product.create! :translation_attributes => [
-      { :locale => 'en', :name => 'Product1'  },
-      { :locale => 'it', :name => 'Prodotto1' }
+      { :locale => :en, :name => 'Product1'  },
+      { :locale => :it, :name => 'Prodotto1' }
     ]
     Product.create! :translation_attributes => [
-      { :locale => 'it', :name => 'Prodotto2' }
+      { :locale => :it, :name => 'Prodotto2' }
     ]
     I18n.locale = :en
 

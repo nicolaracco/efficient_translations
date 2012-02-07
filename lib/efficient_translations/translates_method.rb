@@ -99,7 +99,7 @@ module EfficientTranslations
           translations true #force reload all translations
           efficient_translations_attributes.each do |locale, attributes|
             translation = translations.detect { |t| t.locale.to_sym == locale } || begin
-              args = { :locale => locale.to_s }
+              args = { :locale => locale }
               args[self.class.translation_model.translatable_relation_field] = self
               self.class.translation_model.new args
             end

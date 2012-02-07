@@ -16,6 +16,13 @@ module EfficientTranslations
           named_scope :for_locale, lambda { |locale|
             { :conditions => ['locale = ? OR locale = ?', locale.to_s, I18n.locale.to_s] }
           }
+
+          before_save :stringify_locale!
+        end
+        klass.class_eval do
+          def stringify_locale!
+            self.locale = locale.to_s
+          end
         end
         klass
       end
