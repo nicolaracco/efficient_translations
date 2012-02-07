@@ -96,6 +96,15 @@ Done! You have the EfficientTranslations power in your hands :-)
     Product.create! :translations_attributes => [{:locale => I18n.locale.to_s, :name => 'Another'}]
     Product.last.name # => 'Another'
 
+### Validators
+
+The validator *validates_presence_of_default_locale* is provided to prevent a model to be saved without a translation for the default locale. Eg:
+
+    class Product < ActiveRecord::Base
+      translates :name, :another_field
+      validates_presence_of_default_locale
+    end
+
 ### Named Scopes and Performances Overview
 
 Three named scopes are defined:
@@ -130,6 +139,7 @@ It's not perfect. Observe the following code to understand why:
     I18n.locale = :en
 
     # The second product is not included in the result because it doesn't have the I18n.locale or I18n.default_locale translation
+    # To prevent this you can use validates_presence_of_default_locale
     Product.with_current_translation.size # => 1
 
     p = Product.with_current_translation.first

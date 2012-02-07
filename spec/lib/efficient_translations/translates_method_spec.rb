@@ -2,39 +2,54 @@ require 'spec_helper'
 require 'active_record'
 
 describe EfficientTranslations do
-  describe '::translates' do
-    def model_class
-      Kernel.silence_warnings do
-        model = Kernel.const_set :MyModel, Class.new(ActiveRecord::Base)
-      end
+  def my_model_class
+    Kernel.silence_warnings do
+      Kernel.const_set :MyModel, Class.new(ActiveRecord::Base)
     end
+  end
 
+  describe '::translates' do
     it 'should be defined in ActiveRecord::Base' do
       ActiveRecord::Base.should respond_to :translates
     end
 
     it 'could be invoked specifing multiple attributes' do
-      model = model_class
+      model = my_model_class
       lambda { model.translates :name, :content }.should_not raise_error
     end
 
     it 'could be invoked multiple times' do
-      model = model_class
+      model = my_model_class
       lambda { model.translates :name }.should_not raise_error
       lambda { model.translates :content }.should_not raise_error
     end
 
     it 'should generate the translation model the first time it\'s invoked' do
-      model = model_class
+      model = my_model_class
       model.should_receive :make_efficient_translatable!
       model.translates :name
     end
 
     it 'should not regenerate the translation model when called multiple times' do
-      model = model_class
+      model = my_model_class
       model.translates :name
       model.should_not_receive :make_efficient_translatable!
       model.translates :content
+    end
+  end
+
+  describe '::validates_presence_of_default_locale' do
+    it 'should be defined in ActiveRecord::Base' do
+      ActiveRecord::Base.should respond_to :validates_presence_of_default_locale
+    end
+
+    it 'should prevent saving a model without default locale' do
+      model = my_model_class
+      model.translates :name
+      model.validates_presence_of_default_locale
+      lambda { model.new.save! }.should raise_error ActiveRecord::RecordInvalid
+      inst = model.new :translations_attributes => [{ :locale => :en, :name => 'pippo' }]
+      lambda { inst.save! }.should_not raise_error
     end
   end
 

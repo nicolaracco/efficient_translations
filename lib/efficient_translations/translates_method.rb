@@ -10,6 +10,10 @@ module EfficientTranslations
         field_names.each { |field| define_translation_accessors field }
       end
 
+      def validates_presence_of_default_locale
+        validate :default_locale_required
+      end
+
       private
 
       def make_efficient_translatable!
@@ -105,6 +109,12 @@ module EfficientTranslations
             end
             translation.update_attributes! attributes
           end
+        end
+      end
+
+      def default_locale_required
+        unless translations.detect { |t| t.locale.to_sym == I18n.default_locale }
+          errors.add :translations, "for #{I18n.default_locale} is missing"
         end
       end
     end
