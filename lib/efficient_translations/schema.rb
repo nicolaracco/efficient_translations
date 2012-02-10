@@ -8,10 +8,10 @@ module EfficientTranslations
     # the column name to create and its type.
     # eg. create_translation_table :product, :name => :string, :description => :string
     def create_translation_table model_name, translation_fields
-      translation_table_name = "#{model_name.to_s}_translations"
+      translation_table_name = "#{model_name}_translations"
       create_table translation_table_name do |t|
         t.references model_name, :null => false
-        t.string     :locale   , :null => false
+        t.string     :locale,    :null => false
       end
       translation_fields.each do |name, type|
         add_column translation_table_name, name.to_s, type.to_sym
