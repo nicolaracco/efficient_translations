@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    efficient_translations (0.0.1)
+    efficient_translations (0.0.2)
       activerecord (~> 2.3)
       activesupport (~> 2.3)
 
