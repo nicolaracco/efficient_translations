@@ -75,20 +75,14 @@ describe EfficientTranslations do
       WorkingModel.first.name.should == 'pippo'
     end
 
-    describe 'field_translation' do
-      before do
-        @model = WorkingModel.new
-        @model.set_name_translation :en, 'pippo'
-        @model.save!
-      end
-
+    shared_examples 'translation finder' do
       context 'when cache contains the translated value' do
         before do
           @model.set_name_translation :en, 'foo'
         end
 
         it 'should fetch the value from cache' do
-          @model.name_translation(:en).should == 'foo'
+          invoke(:en).should == 'foo'
         end
       end
 
@@ -96,19 +90,53 @@ describe EfficientTranslations do
         it 'should search in the relationship' do
           @model = WorkingModel.find @model.id
           @model.translation_model.create! :working_model_id => @model.id, :locale => 'fr', :name => 'frfr'
-          @model.name_translation(:fr).should == 'frfr'
+          invoke(:fr).should == 'frfr'
         end
       end
+    end
+
+    describe 'field_translation!' do
+      before do
+        @model = WorkingModel.new
+        @model.set_name_translation :en, 'pippo'
+        @model.save!
+      end
+
+      def invoke *args
+        @model.name_translation! *args
+      end
+
+      it_should_behave_like 'translation finder'
+
+      context 'when cache is empty and no value is found' do
+        it 'should return nil' do
+          invoke(:de).should be_nil
+        end
+      end
+    end
+
+    describe 'field_translation' do
+      before do
+        @model = WorkingModel.new
+        @model.set_name_translation :en, 'pippo'
+        @model.save!
+      end
+
+      def invoke *args
+        @model.name_translation *args
+      end
+
+      it_should_behave_like 'translation finder'
 
       context 'when cache is empty and no value is found' do
         it 'should search for I18n.default_locale if locale != I18n.default_locale' do
           I18n.default_locale = :en
-          @model.name_translation(:de).should == @model.name_translation(:en)
+          invoke(:de).should == @model.name_translation(:en)
         end
 
         it 'should return nil if locale == I18n.default_locale' do
           I18n.default_locale = :de
-          @model.name_translation(:de).should be_nil
+          invoke(:de).should be_nil
         end
       end
     end

@@ -47,7 +47,7 @@ module EfficientTranslations
       def define_translation_accessors field
         field = field.to_sym
         class_eval do
-          define_method "#{field}_translation" do |locale|
+          define_method "#{field}_translation!" do |locale|
             locale = locale.to_sym
             # search in cache
             if efficient_translations_attributes[locale][field]
@@ -55,12 +55,16 @@ module EfficientTranslations
             else
               # search in relationship
               translation = translations.detect { |t| t.locale.to_sym == locale }
-              if translation
-                translation[field]
-              elsif locale != I18n.default_locale
-                # try to fetch default locale
-                self.send "#{field}_translation", I18n.default_locale
-              end
+              translation && translation[field] || nil
+            end
+          end
+
+          define_method "#{field}_translation" do |locale|
+            translation_field = self.send "#{field}_translation!", locale
+            if translation_field
+              translation_field
+            elsif locale.to_sym != I18n.default_locale
+              self.send "#{field}_translation!", I18n.default_locale
             end
           end
 
@@ -71,6 +75,10 @@ module EfficientTranslations
 
           define_method field do
             self.send "#{field}_translation", I18n.locale
+          end
+
+          define_method "#{field}!" do
+            self.send "#{field}_translation!", I18n.locale
           end
 
           define_method "#{field}=" do |value|

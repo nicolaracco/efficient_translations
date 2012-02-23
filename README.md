@@ -82,6 +82,9 @@ Done! You have the EfficientTranslations power in your hands :-)
     I18n.locale = :it
     # when the current locale is not found, the default locale will be used
     product.name # => 'Efficient Translations'
+    # if you don't want the default locale fallback
+    product.name! # => nil
+    product.name_translation! :it # => nil
 
     # .name= is a wrapper to #set_name_translation I18n.locale
     product.name = 'Traduzioni Efficienti'
