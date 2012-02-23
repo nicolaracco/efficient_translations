@@ -54,7 +54,7 @@ describe EfficientTranslations do
     end
   end
 
-  context '::WorkingModel' do
+  describe '::WorkingModel' do
     it 'should include the translation model' do
       WorkingModel.translation_model.should be_kind_of(Class)
     end
@@ -67,6 +67,17 @@ describe EfficientTranslations do
       WorkingModel.should respond_to :with_translations
       WorkingModel.should respond_to :with_current_translation
       WorkingModel.should respond_to :with_translation_for
+    end
+
+    describe '::with_current_translation' do
+      it 'should return only items with translations for I18n.locale or I18n.default_locale' do
+        I18n.locale, I18n.default_locale = :en, :it
+        WorkingModel.delete_all
+        WorkingModel.create! :translations_attributes => [{:locale => :en, :name => 'pippo'}]
+        WorkingModel.create! :translations_attributes => [{:locale => :it, :name => 'pippo'}]
+        WorkingModel.create! :translations_attributes => [{:locale => :fr, :name => 'pippo'}]
+        WorkingModel.with_current_translation.size.should == 2
+      end
     end
 
     it 'should accept nested attributes' do

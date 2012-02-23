@@ -40,7 +40,7 @@ module EfficientTranslations
         }
       end
 
-      def self.scope_conditions
+      def scope_conditions
         "#{translation_model.table_name}.locale = ? OR #{translation_model.table_name}.locale = ?"
       end
 
