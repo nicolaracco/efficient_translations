@@ -4,7 +4,7 @@ require 'active_record'
 describe EfficientTranslations do
   def my_model_class
     Kernel.silence_warnings do
-      Kernel.const_set :MyModel, Class.new(ActiveRecord::Base)
+      Object.const_set :MyModel, Class.new(ActiveRecord::Base)
     end
   end
 
@@ -47,8 +47,9 @@ describe EfficientTranslations do
       model = my_model_class
       model.translates :name
       model.validates_presence_of_default_locale
-      lambda { model.new.save! }.should raise_error ActiveRecord::RecordInvalid
-      inst = model.new :translations_attributes => [{ :locale => :en, :name => 'pippo' }]
+      inst = model.new
+      lambda { inst.save! }.should raise_error ActiveRecord::RecordInvalid
+      inst.set_name_translation I18n.default_locale, 'pippo'
       lambda { inst.save! }.should_not raise_error
     end
   end

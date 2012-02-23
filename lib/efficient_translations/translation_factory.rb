@@ -9,9 +9,9 @@ module EfficientTranslations
           table_name = "#{base_model.table_name.singularize}_translations"
           cattr_accessor :translatable_model, :translatable_relation_field
           self.translatable_model = base_model
-          self.translatable_relation_field = base_model.name.underscore.gsub '/', '_'
+          self.translatable_relation_field = base_model.model_name.underscore.gsub '/', '_'
 
-          belongs_to translatable_relation_field
+          belongs_to translatable_relation_field, :class_name => self.translatable_model.name
           before_save :stringify_locale!
 
           named_scope :for_locale, lambda { |locale|

@@ -114,7 +114,7 @@ module EfficientTranslations
     end
 
     def default_locale_required
-      unless translations.detect { |t| t.locale.to_sym == I18n.default_locale }
+      if efficient_translations_attributes[I18n.default_locale.to_sym].blank? && translations.detect { |t| t.locale.to_sym == I18n.default_locale.to_sym }.nil?
         # people may expect this message to be localized too ;-)
         errors.add :translations, "for #{I18n.default_locale} is missing"
       end

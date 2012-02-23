@@ -3,7 +3,7 @@ require 'spec_helper'
 describe EfficientTranslations::TranslationFactory do
   before :each do
     Kernel.silence_warnings do
-      @model_class = Kernel.const_set :MyModel, Class.new(ActiveRecord::Base)
+      @model_class = Object.const_set :MyModel, Class.new(ActiveRecord::Base)
     end
   end
 
