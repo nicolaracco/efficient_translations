@@ -21,7 +21,7 @@ module EfficientTranslations
       def make_efficient_translatable!
         cattr_accessor :translation_model
         self.translation_model = TranslationFactory.build self
-        has_many :translations, :class_name => translation_model.name, :dependent => :destroy
+        has_many :translations, :class_name => translation_model.name, :dependent => :delete_all
         accepts_nested_attributes_for :translations
         after_save :update_translations!
 
