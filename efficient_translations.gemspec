@@ -17,6 +17,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'sqlite3'
+  gem.add_development_dependency 'guard'
+  gem.add_development_dependency 'guard-rspec'
   gem.add_dependency 'activerecord' , '~> 2.3'
   gem.add_dependency 'activesupport', '~> 2.3'
 
