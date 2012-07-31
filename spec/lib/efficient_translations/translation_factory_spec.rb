@@ -1,58 +1,61 @@
 require 'spec_helper'
 
-describe EfficientTranslations::TranslationFactory do
-  before :each do
-    Kernel.silence_warnings do
-      @model_class = Object.const_set :MyModel, Class.new(ActiveRecord::Base)
-    end
-  end
-
-  describe '::build' do
-    context 'when no translation model is found' do
-      before do
-        @klass = Class.new(ActiveRecord::Base)
-        @model_class.stub :const_set => @klass
-      end
-
-      it 'should create a new ::Translation class' do
-        @model_class.should_receive(:const_set).with(:Translation, kind_of(Class)) { |name, klass| klass }
-        EfficientTranslations::TranslationFactory::build @model_class
-      end
-
-      it 'should define a belongs_to association to the main model' do
-        @klass.should_receive(:belongs_to)
-        EfficientTranslations::TranslationFactory::build @model_class
-      end
-
-      it 'should assign the translatable model in an accessor' do
-        translation = EfficientTranslations::TranslationFactory::build @model_class
-        translation.translatable_model.should == @model_class
-      end
-
-      it 'should assign the translatable model field in an accessor' do
-        translation = EfficientTranslations::TranslationFactory::build @model_class
-        translation.translatable_relation_field.should == @model_class.name.underscore.gsub('/','_')
-      end
-
-      it 'should return the created translation class' do
-        klass = Class.new(ActiveRecord::Base)
-        @model_class.stub :const_set => klass
-        EfficientTranslations::TranslationFactory::build(@model_class).should == klass
+module EfficientTranslations
+  describe TranslationFactory do
+    before :each do
+      Kernel.silence_warnings do
+        @model_class = Object.const_set :MyModel, Class.new(ActiveRecord::Base)
       end
     end
 
-    context 'when a translation model is found' do
-      it 'should not create a ::Translation class' do
-        EfficientTranslations::TranslationFactory::build @model_class
-        @model_class.should_not_receive(:const_set)
-        EfficientTranslations::TranslationFactory::build @model_class
+    describe '::translation_model' do
+      context "the first time it's invoked on a model" do
+        it 'defines the translation model' do
+          expect { @model_class.const_get :Translation }.to raise_error NameError
+          TranslationFactory.translation_model_for @model_class
+          expect { @model_class.const_get :Translation }.to_not raise_error NameError
+        end
+
+        it 'includes the TranslationModel module in the translation model' do
+          TranslationFactory.translation_model_for(@model_class).included_modules.should include TranslationModel
+        end
       end
 
-      it 'should return the already defined translation class' do
-        klass = Class.new(ActiveRecord::Base)
-        @model_class.stub :const_set => klass
-        EfficientTranslations::TranslationFactory::build @model_class
-        EfficientTranslations::TranslationFactory::build(@model_class).should == klass
+      it 'returns the existing translation_model' do
+        t = TranslationFactory.translation_model_for @model_class
+        TranslationFactory.translation_model_for(@model_class).should == t
+      end
+    end
+
+    describe '::build_translation_model' do
+      before { @translation_model = TranslationFactory.translation_model_for @model_class }
+
+      context 'when translation model is not built' do
+        it 'sets translatable model reader' do
+          @translation_model.translatable_model.should be_nil
+          TranslationFactory.build_translation_model @model_class
+          @translation_model.translatable_model.should == @model_class
+        end
+
+        it 'sets translatable relation field reader' do
+          @translation_model.translatable_relation_field.should be_nil
+          TranslationFactory.build_translation_model @model_class
+          @translation_model.translatable_relation_field.should == :my_model
+        end
+
+        it 'assigns the belongs_to relationship' do
+
+        end
+      end
+
+      context 'when translation model is already built' do
+        it 'raises an error' do
+          TranslationFactory.build_translation_model(@model_class)
+          TranslationFactory.translation_model_for(@model_class).should_not_receive(:belongs_to)
+          expect {
+            TranslationFactory.build_translation_model @model_class
+          }.to raise_error
+        end
       end
     end
   end

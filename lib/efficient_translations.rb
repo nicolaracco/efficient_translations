@@ -1,11 +1,13 @@
 require 'active_support'
 require 'active_record'
 
-dir = File.join File.expand_path(File.dirname __FILE__), 'efficient_translations'
-require File.join dir, 'version'
-require File.join dir, 'schema'
-require File.join dir, 'translation_factory'
-require File.join dir, 'translates_method'
+root = File.expand_path File.dirname __FILE__
+
+require File.join root, 'active_support/concern'
+
+%W(version schema translation_model translation_factory translates_method).each do |file|
+  require File.join root, "efficient_translations/#{file}"
+end
 
 ::ActiveRecord::ConnectionAdapters::AbstractAdapter.send :include, EfficientTranslations::Schema
 ::ActiveRecord::Base.send :include, EfficientTranslations::TranslatesMethod
