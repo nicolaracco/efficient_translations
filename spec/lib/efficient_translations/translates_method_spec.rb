@@ -24,17 +24,10 @@ describe EfficientTranslations do
       lambda { model.translates :content }.should_not raise_error
     end
 
-    it 'should generate the translation model the first time it\'s invoked' do
-      model = my_model_class
-      model.should_receive :make_efficient_translatable!
-      model.translates :name
-    end
-
-    it 'should not regenerate the translation model when called multiple times' do
+    it 'fills a translated_fields list' do
       model = my_model_class
       model.translates :name
-      model.should_not_receive :make_efficient_translatable!
-      model.translates :content
+      model.translated_fields.should =~ [:name]
     end
   end
 

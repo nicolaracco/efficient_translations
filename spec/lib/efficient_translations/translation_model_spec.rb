@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module EfficientTranslations
   describe TranslationModel do
-    it 'is included in WorkingModel' do
+    it 'is included in WorkingModel::Translation' do
       WorkingModel::Translation.included_modules.should include TranslationModel
     end
 

@@ -42,10 +42,6 @@ module EfficientTranslations
           TranslationFactory.build_translation_model @model_class
           @translation_model.translatable_relation_field.should == :my_model
         end
-
-        it 'assigns the belongs_to relationship' do
-
-        end
       end
 
       context 'when translation model is already built' do

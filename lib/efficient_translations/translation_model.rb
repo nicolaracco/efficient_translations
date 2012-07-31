@@ -2,6 +2,18 @@ module EfficientTranslations
   module TranslationModel
     extend ActiveSupport::Concern
 
+    included do
+      extend ClassMethods
+
+      cattr_accessor :translatable_model, :translatable_relation_field
+
+      before_save :stringify_locale!
+
+      named_scope :for_locale, lambda { |locale|
+        { :conditions => ['locale = ? OR locale = ?', locale.to_s, I18n.locale.to_s] }
+      }
+    end
+
     module ClassMethods
       def build_for base_model
         if translatable_model
@@ -13,18 +25,6 @@ module EfficientTranslations
           belongs_to translatable_relation_field, :class_name => self.translatable_model.name
         end
       end
-    end
-
-    included do
-      extend ClassMethods
-
-      cattr_accessor :translatable_model, :translatable_relation_field
-
-      before_save :stringify_locale!
-
-      named_scope :for_locale, lambda { |locale|
-        { :conditions => ['locale = ? OR locale = ?', locale.to_s, I18n.locale.to_s] }
-      }
     end
 
     private
