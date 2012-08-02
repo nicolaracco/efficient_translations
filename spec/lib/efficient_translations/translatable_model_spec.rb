@@ -41,6 +41,7 @@ module EfficientTranslations
         it 'does not add an error' do
           model = WorkingModel.new
           model.set_name_translation I18n.default_locale, 'w'
+          model.set_content_translation I18n.default_locale, 'w'
           model.send :default_locale_presence_validation
           model.errors.should be_empty
         end
