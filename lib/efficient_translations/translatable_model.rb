@@ -3,6 +3,10 @@ module EfficientTranslations
     extend ActiveSupport::Concern
 
     included do
+      def self.translation_model_table
+        translation_model.table_name
+      end
+
       # Translation Model
       cattr_accessor :translation_model, :translated_fields
       self.translation_model = TranslationFactory.build_translation_model self
@@ -20,7 +24,7 @@ module EfficientTranslations
         {
           :include => :translations,
           :conditions => [
-            "#{translation_model.table_name}.locale = ? OR #{translation_model.table_name}.locale = ?",
+            "#{translation_model_table}.locale = ? OR #{translation_model_table}.locale = ?",
             I18n.locale.to_s, I18n.default_locale.to_s
           ]
         }
@@ -29,7 +33,7 @@ module EfficientTranslations
         {
           :inlude => :translations,
           :conditions => [
-            "#{translation_model.table_name}.locale = ? OR #{translation_model.table_name}.locale = ?",
+            "#{translation_model_table}.locale = ? OR #{translation_model_table}.locale = ?",
             locale.to_s, I18n.default_locale.to_s
           ]
         }
@@ -39,9 +43,19 @@ module EfficientTranslations
     private
 
     def default_locale_presence_validation
-      if efficient_translations_attributes[I18n.default_locale.to_sym].blank? && translations.detect { |t| t.locale.to_sym == I18n.default_locale.to_sym }.nil?
+      if default_locale_translation_attributes.blank? && default_translation.blank?
         # people may expect this message to be localized too ;-)
         errors.add :translations, "for #{I18n.default_locale} is missing"
+      end
+    end
+
+    def default_locale_translation_attributes
+      efficient_translations_attributes[I18n.default_locale.to_sym]
+    end
+
+    def default_translation
+      translations.detect do |translation|
+        translation.locale.to_sym == I18n.default_locale.to_sym
       end
     end
 
