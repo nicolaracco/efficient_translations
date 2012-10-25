@@ -8,9 +8,7 @@ module EfficientTranslations
 
     it 'defines a stringify_locale! method' do
       instance = WorkingModel::Translation.new :locale => :us
-      expect {
-        instance.send :stringify_locale!
-      }.to change(instance, :locale).to 'us'
+      expect{ instance.send :stringify_locale! }.to change(instance, :locale).to 'us'
     end
 
     it 'defines a translatable_model reader' do

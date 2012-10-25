@@ -95,7 +95,7 @@ describe EfficientTranslations do
       context 'when cache is empty' do
         it 'should search in the relationship' do
           @model = WorkingModel.find @model.id
-          @model.translation_model.create! :working_model_id => @model.id, :locale => 'fr', :name => 'frfr'
+          @model.translation_model.create! :working_model => @model, :locale => 'fr', :name => 'frfr'
           invoke(:fr).should == 'frfr'
         end
       end
@@ -172,5 +172,7 @@ describe EfficientTranslations do
         model.name = 'pippo'
       end
     end
+
+    pending 'It uses attr_accessible'
   end
 end

@@ -8,6 +8,7 @@ module EfficientTranslations
       def translates *field_names
         include TranslatableModel unless included_modules.include? TranslatableModel
         self.translated_fields = field_names
+        translation_model.attr_accessible *field_names
         field_names.each do |field|
           define_translation_accessors field
         end
