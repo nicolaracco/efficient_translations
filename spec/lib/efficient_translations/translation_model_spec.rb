@@ -26,7 +26,8 @@ module EfficientTranslations
     end
 
     it 'defines a before_save filter to force the locale in string' do
-      WorkingModel::Translation.before_save_callback_chain.map(&:method).should include :stringify_locale!
+      before_save_callbacks = WorkingModel::Translation._save_callbacks.select { |c| c.kind == :before }.collect &:filter
+      before_save_callbacks.should include :stringify_locale!
     end
   end
 end

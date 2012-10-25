@@ -19,8 +19,9 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'sqlite3'
   gem.add_development_dependency 'guard'
   gem.add_development_dependency 'guard-rspec'
-  gem.add_dependency 'activerecord' , '~> 2.3'
-  gem.add_dependency 'activesupport', '~> 2.3'
+  gem.add_development_dependency 'rb-fsevent'
+  gem.add_dependency 'activerecord' , '~> 3'
+  gem.add_dependency 'activesupport', '~> 3'
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")

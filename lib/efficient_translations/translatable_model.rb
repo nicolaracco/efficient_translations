@@ -15,24 +15,14 @@ module EfficientTranslations
       after_save :update_translations!
 
       # Scopes
-      named_scope :with_translations, :include => :translations
-      named_scope :with_current_translation, lambda {
-        {
-          :include => :translations,
-          :conditions => [
-            "#{translation_model.table_name}.locale = ? OR #{translation_model.table_name}.locale = ?",
-            I18n.locale.to_s, I18n.default_locale.to_s
-          ]
-        }
+      scope :with_translations, :include => :translations
+      scope :with_current_translation, lambda {
+        t_table = translation_model.table_name
+        includes(:translations).where("#{t_table}.locale = ? OR #{t_table}.locale = ?", I18n.locale.to_s, I18n.default_locale.to_s)
       }
-      named_scope :with_translation_for, lambda { |locale|
-        {
-          :inlude => :translations,
-          :conditions => [
-            "#{translation_model.table_name}.locale = ? OR #{translation_model.table_name}.locale = ?",
-            locale.to_s, I18n.default_locale.to_s
-          ]
-        }
+      scope :with_translation_for, lambda { |locale|
+        t_table = translation_model.table_name
+        includes(:translations).where("#{t_table}.locale = ? OR #{t_table}.locale = ?", locale.to_s, I18n.default_locale.to_s)
       }
     end
 

@@ -19,7 +19,8 @@ module EfficientTranslations
     end
 
     it 'defines an after_save callback to update translations' do
-      WorkingModel.after_save_callback_chain.map(&:method).should include :update_translations!
+      after_save_callbacks = WorkingModel._save_callbacks.select { |c| c.kind == :after }.collect &:filter
+      after_save_callbacks.should include :update_translations!
     end
 
     it 'defines some named scopes' do

@@ -9,9 +9,7 @@ module EfficientTranslations
 
       before_save :stringify_locale!
 
-      named_scope :for_locale, lambda { |locale|
-        { :conditions => ['locale = ? OR locale = ?', locale.to_s, I18n.locale.to_s] }
-      }
+      scope :for_locale, lambda { |locale| where('locale = ? OR locale = ?', locale.to_s, I18n.locale.to_s) }
     end
 
     module ClassMethods
