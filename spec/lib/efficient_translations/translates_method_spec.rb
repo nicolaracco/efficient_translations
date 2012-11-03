@@ -42,6 +42,8 @@ describe EfficientTranslations do
       model.validates_presence_of_default_locale
       inst = model.new
       lambda { inst.save! }.should raise_error ActiveRecord::RecordInvalid
+      inst.set_name_translation I18n.default_locale, nil
+      lambda { inst.save! }.should raise_error ActiveRecord::RecordInvalid
       inst.set_name_translation I18n.default_locale, 'pippo'
       lambda { inst.save! }.should_not raise_error
     end

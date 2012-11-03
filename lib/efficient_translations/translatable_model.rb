@@ -43,19 +43,11 @@ module EfficientTranslations
     private
 
     def default_locale_presence_validation
-      if default_locale_translation_attributes.blank? && default_translation.blank?
+      locale = I18n.default_locale.to_sym
+      translation = efficient_translations_attributes[locale] || translations.detect { |t| t.locale.to_sym == locale }
+      self.class.translated_fields.each do |field|
         # people may expect this message to be localized too ;-)
-        errors.add :translations, "for #{I18n.default_locale} is missing"
-      end
-    end
-
-    def default_locale_translation_attributes
-      efficient_translations_attributes[I18n.default_locale.to_sym]
-    end
-
-    def default_translation
-      translations.detect do |translation|
-        translation.locale.to_sym == I18n.default_locale.to_sym
+        errors.add field, "for #{I18n.default_locale} is missing" if translation[field].blank?
       end
     end
 
