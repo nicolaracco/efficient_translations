@@ -25,11 +25,9 @@ module EfficientTranslations
           define_method "#{field}_translation!" do |locale|
             locale = locale.to_sym
             # search in cache
-            if efficient_translations_attributes[locale][field]
-              efficient_translations_attributes[locale][field]
-            else
+            efficient_translations_attributes[locale][field] || begin
               # search in relationship
-              translation = translations.detect { |t| t.locale.to_sym == locale }
+              translation = translations.detect { |t| t.locale.to_sym == locale } # I've seen this detect at least twice, should be moved in a meaningful method
               translation && translation[field] || nil
             end
           end
